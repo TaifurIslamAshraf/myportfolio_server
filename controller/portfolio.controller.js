@@ -16,6 +16,26 @@ const getPortfolio = async (req, res) => {
   }
 };
 
+const getSinglePortfolio = async (req, res) => {
+  try {
+    const portfolio = await Portfolio.findById(req.params.id);
+
+    if (!portfolio) {
+      throw new Error("Portfolio not found");
+    }
+
+    res.status(200).json({
+      success: true,
+      portfolio,
+    });
+  } catch (error) {
+    res.status(501).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
 const createPortfolio = async (req, res) => {
   try {
     const portfolio = req.body;
@@ -40,6 +60,7 @@ const updatePortfolio = async (req, res) => {
     const id = req.params.id;
     const portfolio = await Portfolio.findByIdAndUpdate(id, updatedPortfolio, {
       new: true,
+      runValidators: true,
     });
     res.status(201).json({
       success: true,
@@ -76,4 +97,5 @@ module.exports = {
   createPortfolio,
   updatePortfolio,
   deletePortfolio,
+  getSinglePortfolio,
 };
